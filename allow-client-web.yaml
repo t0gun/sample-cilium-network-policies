@@ -1,0 +1,35 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: client-egress-to-web
+  namespace: demo
+spec:
+  endpointSelector:
+    matchLabels:
+      run: client
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app: web
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: web-ingress-from-client
+  namespace: demo
+spec:
+  endpointSelector:
+    matchLabels:
+      app: web
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            run: client
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
